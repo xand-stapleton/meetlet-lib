@@ -93,7 +93,7 @@ func (p Location) Validate() error {
 	if strings.TrimSpace(p.Name) == "" || len(p.Name) > 200 || strings.ContainsFunc(p.Name, unicode.IsControl) {
 		return fmt.Errorf("location name must be 1–200 bytes without control characters")
 	}
-	if p.Zone == "Local" || p.Zone == "" {
+	if p.Zone == "" {
 		return fmt.Errorf("use an explicit IANA zone such as Europe/London")
 	}
 	if _, err := p.Load(); err != nil {

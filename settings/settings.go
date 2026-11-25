@@ -33,10 +33,11 @@ type Colours struct {
 }
 
 type Config struct {
-	Version   int               `yaml:"version"`
-	Source    string            `yaml:"source"`
-	Locations []places.Location `yaml:"locations"`
-	Colours   Colours           `yaml:"colours"`
+	localSource string            // Pinned for this session.
+	Version     int               `yaml:"version"`
+	Source      string            `yaml:"source"`
+	Locations   []places.Location `yaml:"locations"`
+	Colours     Colours           `yaml:"colours"`
 }
 
 // Default returns an independent copy of the shipped configuration. Embedding
@@ -182,6 +183,9 @@ func (c *Config) AddLocation(p places.Location) error {
 }
 
 func (c *Config) RemoveLocation(name string) error {
+	if c.IsLocalSource(name) {
+		return fmt.Errorf("the local time zone always stays first")
+	}
 	if name == c.Source {
 		return fmt.Errorf("choose another source before removing %s", name)
 	}

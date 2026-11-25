@@ -7,19 +7,15 @@ import (
 	"time"
 )
 
-// NewMeeting starts at 15:00 today in the configured source location.
+// NewMeeting starts at the current minute in the configured source location.
 func NewMeeting(cfg settings.Config, now time.Time) (Meeting, error) {
 	origin := cfg.Origin()
 	loc, err := origin.Load()
 	if err != nil {
 		return Meeting{}, err
 	}
-	at, err := WallTime(now.In(loc).Format("2006-01-02"), "15:00", loc, "")
-	if err != nil {
-		return Meeting{}, err
-	}
 	meeting := Meeting{
-		At: at, Origin: origin, Locations: cfg.Locations,
+		At: now.Truncate(time.Minute).In(loc), Origin: origin, Locations: cfg.Locations,
 		Title: "Meeting", Duration: time.Hour,
 	}
 	return meeting, meeting.Validate()
